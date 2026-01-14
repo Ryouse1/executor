@@ -1,16 +1,12 @@
 // App.jsx
 import React, { useState } from "react";
 import MonacoEditor from "@monaco-editor/react";
-
-const LANGUAGES = [
-  "python", "javascript", "cpp", "ruby", "go", "java", "c", "php", 
-  "swift", "kotlin", "scala", "rust", "perl", "lua", "haskell", 
-  "dart", "r", "julia", "typescript", "csharp",
-  // 実際には100言語分追加可能
-];
+import { LANGUAGE_IMAGE } from "./languages"; // 後述の100言語JSON
 
 export default function App() {
-  const [files, setFiles] = useState({ "main.py": "print('Hello World')" });
+  const LANGUAGES = Object.keys(LANGUAGE_IMAGE);
+
+  const [files, setFiles] = useState({ "main.py": "print('Hello VSCode風IDE')" });
   const [currentFile, setCurrentFile] = useState("main.py");
   const [currentLang, setCurrentLang] = useState("python");
   const [output, setOutput] = useState("");
@@ -35,7 +31,9 @@ export default function App() {
           {LANGUAGES.map((l) => <option key={l} value={l}>{l}</option>)}
         </select>
       </div>
+
       <div style={{ display: "flex", flex: 1 }}>
+        {/* ファイルツリー */}
         <div style={{ width: "200px", borderRight: "1px solid gray", padding: "10px" }}>
           {Object.keys(files).map((f) => (
             <div
@@ -52,6 +50,8 @@ export default function App() {
             </div>
           ))}
         </div>
+
+        {/* エディタ */}
         <div style={{ flex: 1 }}>
           <MonacoEditor
             height="100%"
@@ -62,6 +62,8 @@ export default function App() {
           />
         </div>
       </div>
+
+      {/* コンソール */}
       <div style={{ height: "150px", background: "#1e1e1e", color: "#fff", padding: "10px", overflow: "auto" }}>
         <pre>{output}</pre>
         <button onClick={runCode} style={{ marginTop: "10px", padding: "5px 10px" }}>Run</button>
