@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Web IDE (100言語対応)</title>
+  <style>
+    body { margin:0; font-family: monospace; background:#1e1e1e; color:#fff; }
+    #editor { height: 70vh; width: 100%; border-bottom: 1px solid gray; }
+    #controls { padding:5px; background:#2b2b2b; }
+    select, button { font-size: 16px; }
+    #output { height: 25vh; overflow:auto; background:#111; padding:10px; }
+  </style>
+</head>
+<body>
+
+<div id="controls">
+  言語:
+  <select id="language"></select>
+  <button id="run">Run</button>
+</div>
+
+<div id="editor" contenteditable="true">
+print("Hello World")
+</div>
+
+<div id="output"></div>
+
+<script>
+const LANGUAGES = [
+  "python","javascript","typescript","cpp","c","java","ruby","php","go","rust",
+  "kotlin","swift","scala","perl","lua","haskell","dart","r","julia","csharp",
+  "bash","sql","matlab","fortran","elixir","erlang","clojure","groovy","fsharp",
+  "objective-c","powershell","vbnet","assembly","prolog","scheme","smalltalk","ocaml",
+  "nim","racket","elisp","awk","sed","groff","tcl","ada","crystal","coffeescript",
+  "d","forth","idl","j","k","lisp","make","ml","moon","ocam","plsql","postscript",
+  "rebol","red","sas","sed","shell","snobol","sqlpl","tcl","vala","vb","verilog",
+  "vhdl","wren","zig","nimrod","idris","agda","fennel","pike","bc","icon","modula2",
+  "rexx","ocamllex","awkward","pony","factor","ada95","basic","chips","cl","bcpl",
+  "elm","eiffel","gosu","iconc","io","joy","labview","occam","postscript","pure","q",
+  "ring","slash","spin","vala","vbscript","verilog","x10"
+];
+
+const langSelect = document.getElementById("language");
+LANGUAGES.forEach(l => {
+  const opt = document.createElement("option");
+  opt.value = l; opt.innerText = l;
+  langSelect.appendChild(opt);
+});
+
+document.getElementById("run").addEventListener("click", async () => {
+  const code = document.getElementById("editor").innerText;
+  const lang = langSelect.value;
+  const res = await fetch(`http://localhost:5000/run/${lang}`, {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ code })
+  });
+  const data = await res.json();
+  document.getElementById("output").innerText = data.output;
+});
+</script>
+
+</body>
+</html>
